@@ -18,23 +18,11 @@ jobs:
         with:
           java-version: '17'
 
-      - name: Cache SonarQube packages
-        uses: actions/cache@v3
-        with:
-          path: ~/.sonar/cache
-          key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar
-
       - name: SonarQube Scan
+        uses: sonarsource/sonarqube-scan-action@master
+        with:
+          projectBaseDir: .
+          distribution: 'sonar-scanner'
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: |
-          wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.8.0.2856-linux.zip
-          unzip sonar-scanner-cli-*.zip
-          ./sonar-scanner-*/bin/sonar-scanner \
-            -Dsonar.projectKey=com.bosch.eng2cloudsonar.bccsonar \
-            -Dsonar.projectName=BCC_Project_sprint18 \
-            -Dsonar.projectVersion=0.1 \
-            -Dsonar.sources=. \
-            -Dsonar.host.url=https://sonarqube.dev.bosch.com \
-            -Dsonar.login=${SONAR_TOKEN}
+          SONAR_HOST_URL: https://sonarqube.dev.bosch.com
